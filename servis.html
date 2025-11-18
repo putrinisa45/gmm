@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulir Servis Perangkat</title>
+  <style>
+    :root{--accent:#2563eb;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, Arial, sans-serif;background:#f6f8fb;margin:0;padding:24px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{width:100%;max-width:900px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(18,38,63,0.08);padding:28px}
+    h1{margin:0 0 6px;font-size:20px}
+    p.lead{margin:0 0 22px;color:var(--muted)}
+    form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .full{grid-column:1 / -1}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#111827}
+    input[type="text"],input[type="email"],input[type="tel"],select,textarea,input[type="datetime-local"]{
+      width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px}
+    textarea{min-height:120px;resize:vertical}
+    .note{font-size:13px;color:var(--muted);margin-top:6px}
+    .actions{display:flex;gap:12px;align-items:center;margin-top:10px}
+    button{background:var(--accent);color:white;padding:10px 16px;border:none;border-radius:10px;font-weight:600;cursor:pointer}
+    button.secondary{background:#eef2ff;color:var(--accent);border:1px solid #dbeafe}
+    .col-right{display:flex;flex-direction:column;gap:12px}
+    .preview{border:1px dashed #e6e9ef;padding:10px;border-radius:8px;text-align:center;background:#fbfdff}
+    .small{font-size:13px;color:var(--muted)}
+    .error{color:#b91c1c;font-size:13px;margin-top:6px}
+    @media (max-width:720px){form{grid-template-columns:1fr} .col-right{order:2}}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h1>Formulir Permintaan Servis</h1>
+    <p class="lead">Isi data lengkap perangkat dan keluhan. Tim servis akan menghubungi Anda untuk konfirmasi.</p>
+
+    <form id="serviceForm" novalidate>
+      <div>
+        <label for="fullname">Nama Lengkap *</label>
+        <input type="text" id="fullname" name="fullname" placeholder="Nama Anda" required />
+        <div class="error" id="err-fullname" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <label for="phone">Nomor Telepon/WA *</label>
+        <input type="tel" id="phone" name="phone" placeholder="0812xxxxxxx" required />
+        <div class="error" id="err-phone" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="email@contoh.com" />
+      </div>
+
+      <div>
+        <label for="deviceType">Jenis Perangkat *</label>
+        <select id="deviceType" name="deviceType" required>
+          <option value="">Pilih...</option>
+          <option>Smartphone</option>
+          <option>Tablet</option>
+          <option>Laptop</option>
+          <option>PC / Desktop</option>
+          <option>Printer</option>
+          <option>Lainnya</option>
+        </select>
+        <div class="error" id="err-deviceType" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <label for="brand">Merek / Model</label>
+        <input type="text" id="brand" name="brand" placeholder="Contoh: Samsung A14 / HP ProBook" />
+      </div>
+
+      <div class="full">
+        <label for="problem">Deskripsi Kerusakan / Keluhan *</label>
+        <textarea id="problem" name="problem" placeholder="Jelaskan masalah secara singkat (mis. layar retak, tidak nyala, lambat)." required></textarea>
+        <div class="error" id="err-problem" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <label for="preferred">Tanggal & Waktu Preferensi</label>
+        <input type="datetime-local" id="preferred" name="preferred" />
+        <p class="note">Opsional — silakan isi jika Anda ingin teknisi datang pada waktu tertentu.</p>
+      </div>
+
+      <div>
+        <label for="photo">Unggah Foto Kerusakan (opsional)</label>
+        <input type="file" id="photo" name="photo" accept="image/*" />
+        <div class="preview" id="preview">Belum ada foto</div>
+      </div>
+
+      <div class="full">
+        <label for="address">Alamat Penjemputan / Lokasi Service (jika perlu)</label>
+        <input type="text" id="address" name="address" placeholder="Jalan, kota, kode pos" />
+      </div>
+
+      <div class="full">
+        <label>
+          <input type="checkbox" id="agree" name="agree" required /> Saya menyetujui syarat layanan dan kebijakan privasi. *
+        </label>
+        <div class="error" id="err-agree" aria-live="polite"></div>
+      </div>
+
+      <div class="full actions">
+        <button type="submit">Kirim Permintaan</button>
+        <button type="button" class="secondary" id="resetBtn">Reset</button>
+        <div style="margin-left:auto" class="small">Semua kolom bertanda * wajib diisi.</div>
+      </div>
+    </form>
+
+    <template id="successTpl">
+      <div style="margin-top:16px;padding:14px;border-radius:8px;background:#ecfdf5;color:#065f46">Permintaan Anda telah dikirim. Tim kami akan menghubungi Anda dalam 1x24 jam.</div>
+    </template>
+  </div>
+
+  <script>
+    const form = document.getElementById('serviceForm');
+    const preview = document.getElementById('preview');
+    const photo = document.getElementById('photo');
+
+    function clearErrors(){
+      document.querySelectorAll('.error').forEach(e=>e.textContent='');
+    }
+
+    photo.addEventListener('change', ()=>{
+      const f = photo.files && photo.files[0];
+      if(!f){ preview.innerHTML = 'Belum ada foto'; return }
+      if(!f.type.startsWith('image/')){ preview.innerHTML = 'File bukan gambar'; return }
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.innerHTML = `<img src="${e.target.result}" alt="preview" style="max-width:100%;height:auto;border-radius:6px;">`;
+      };
+      reader.readAsDataURL(f);
+    });
+
+    form.addEventListener('submit', (ev)=>{
+      ev.preventDefault();
+      clearErrors();
+      let ok = true;
+      const fullname = document.getElementById('fullname');
+      const phone = document.getElementById('phone');
+      const deviceType = document.getElementById('deviceType');
+      const problem = document.getElementById('problem');
+      const agree = document.getElementById('agree');
+
+      if(fullname.value.trim().length < 3){ document.getElementById('err-fullname').textContent = 'Nama terlalu singkat'; ok=false }
+      if(!/^\+?[0-9\s\-]{6,20}$/.test(phone.value.trim())){ document.getElementById('err-phone').textContent = 'Nomor telepon tidak valid'; ok=false }
+      if(deviceType.value === ''){ document.getElementById('err-deviceType').textContent = 'Pilih jenis perangkat'; ok=false }
+      if(problem.value.trim().length < 8){ document.getElementById('err-problem').textContent = 'Jelaskan masalah lebih rinci'; ok=false }
+      if(!agree.checked){ document.getElementById('err-agree').textContent = 'Anda harus menyetujui syarat layanan'; ok=false }
+
+      if(!ok) return;
+
+      // Simulasi pengiriman: di sini Anda bisa mengganti dengan fetch() ke endpoint server
+      const data = new FormData(form);
+      // Contoh: fetch('/submit-servis', {method:'POST', body: data})...
+
+      // Tampilkan notifikasi sukses
+      const tpl = document.getElementById('successTpl').content.cloneNode(true);
+      form.reset(); preview.innerHTML = 'Belum ada foto';
+      form.parentElement.appendChild(tpl);
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{ form.reset(); preview.innerHTML='Belum ada foto'; clearErrors(); });
+  </script>
+</body>
+</html>

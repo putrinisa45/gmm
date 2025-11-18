@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Profil</title>
+    <!-- Link ke Google Fonts untuk font menarik -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset dasar untuk konsistensi */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif; /* Font utama yang modern dan menarik */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif; /* Font bold untuk judul utama */
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: slideIn 1.2s ease-out;
+            font-weight: 700; /* Extra bold untuk kesan kuat */
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(102, 126, 234, 0.5);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 126, 234, 0.7);
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-pic:hover {
+            transform: rotate(5deg) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-info h2 {
+            font-family: 'Montserrat', sans-serif; /* Font untuk sub-judul */
+            margin-bottom: 10px;
+            color: #2c3e50;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-weight: 600; /* Semi-bold untuk kesan elegan */
+        }
+
+        .profile-info p {
+            margin-bottom: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+            font-weight: 300; /* Light italic untuk bio */
+        }
+
+        /* Custom Dropdown Styling */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-selected {
+            font-family: 'Poppins', sans-serif; /* Font konsisten untuk dropdown */
+            padding: 12px;
+            background: linear-gradient(45deg, #f9f9f9, #e0e0e0);
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-selected:hover {
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .dropdown-selected::after {
+            content: '▼';
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .custom-dropdown.open .dropdown-selected::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .custom-dropdown.open .dropdown-options {
+            max-height: 200px;
+            opacity: 1;
+        }
+
+        .dropdown-options ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-options li {
+            font-family: 'Poppins', sans-serif; /* Font untuk opsi */
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-options li:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-options li:hover {
+            background: linear-gradient(45deg, #3498db, #5dade2);
+            color: #fff;
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.5);
+        }
+
+        .dropdown-options li.selected {
+            background: #27ae60;
+            color: #fff;
+        }
+
+        .dropdown-options li::before {
+            content: '●';
+            margin-right: 10px;
+            font-size: 12px;
+            color: inherit;
+        }
+
+        /* Menu hamburger dengan 3 garis (desain garis 3) */
+        .hamburger {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .hamburger.open div:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .hamburger.open div:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open div:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Navigasi sederhana */
+        nav {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(102, 126, 234, 0.4);
+            padding: 15px;
+            animation: fadeInNav 0.5s ease;
+        }
+
+        @keyframes fadeInNav {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 10px 0;
+        }
+
+        nav ul li a {
+            font-family: 'Poppins', sans-serif; /* Font untuk link navigasi */
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        /* Responsivitas */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .profile-container {
+                padding: 20px;
+            }
+            .hamburger {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu hamburger dengan 3 garis -->
+    <div class="hamburger" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <nav id="nav">
+        <ul>
+            <li><a href="#">Beranda</a></li>
+            <li><a href="tentang.html">Tentang</a></li>
+            <li><a href="kontak.html">Kontak</a></li>
+        </ul>
+    </nav>
+
+    <h1>Halaman Profil</h1>
+    <div class="profile-container">
+        <img src="profil.jpg" alt="Foto Profil" class="profile-pic">
+        <div class="profile-info">
+            <h2>GRIYA MULTIMEDIA</h2>
+            <p>  Jl. Kodari Mentaraman, RT.26/RW.04, Kabupaten Malang 65165, Indonesia</p>
+        </div>
+        <div class="custom-dropdown" id="statusDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown()">Pilih Keperluan Anda ▼</div>
+            <div class="dropdown-options">
+                <ul>
+                    <li><a href="servis.html">Servis</a></li>
+                    <li><a href="prakerin.html">Prakerin</a></li>
+                    <li><a href="jualbeli.html">Beli produk kami</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk toggle menu hamburger
+        function toggleMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.getElementById('nav');
+            hamburger.classList.toggle('open');
+            nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Fungsi untuk toggle custom dropdown
+        function toggleDropdown() {
+            const dropdown = document.getElementById('statusDropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fungsi untuk memilih opsi dan update teks
+        document.querySelectorAll('.dropdown-options li').forEach(item => {
+            item.addEventListener('click', function() {
+                const selectedText = this.textContent;
+                const selectedValue = this.getAttribute('data-value');
+                document.querySelector('.dropdown-selected').textContent = selectedText + ' ▼';
+                document.getElementById('statusDropdown').classList.remove('open');
+                // Tambahkan logika jika perlu, misalnya simpan nilai
+                console.log('Status dipilih:', selectedValue);
+            });
+        });
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener('click', function(e) {
+            if (!document.getElementById('statusDropdown').contains(e.target)) {
+                document.getElementById('statusDropdown').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

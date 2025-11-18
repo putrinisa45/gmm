@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulir Absen Prakerin</title>
+  <style>
+    body{font-family:Arial, sans-serif;background:#f4f6fa;margin:0;padding:24px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+    .card{max-width:800px;width:100%;background:#fff;padding:24px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,0.08)}
+    h1{margin:0 0 8px;font-size:22px}
+    p{margin:0 0 20px;color:#555}
+    form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    label{font-size:14px;margin-bottom:6px;display:block}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+    textarea{min-height:100px;resize:vertical}
+    .full{grid-column:1 / -1}
+    button{padding:10px 16px;border:none;border-radius:8px;background:#2563eb;color:white;font-weight:600;cursor:pointer}
+    .secondary{background:#e1e7ff;color:#2563eb;margin-left:8px}
+    .actions{grid-column:1 / -1;display:flex;align-items:center}
+    .error{color:#b91c1c;font-size:13px;margin-top:4px}
+    @media(max-width:720px){form{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Formulir Absen Prakerin</h1>
+    <p>Isi data kehadiran harian selama kegiatan Praktik Kerja Industri (PKL / Prakerin).</p>
+
+    <form id="absenForm" novalidate>
+      <div>
+        <label for="name">Nama Siswa *</label>
+        <input type="text" id="name" name="name" placeholder="Nama lengkap" required>
+        <div class="error" id="err-name"></div>
+      </div>
+
+      <div>
+        <label for="kelas">Asal Sekolah *</label>
+        <input type="text" id="kelas" name="kelas" placeholder="Nama sekolah Anda" required>
+        <div class="error" id="err-kelas"></div>
+      </div>
+
+      <div>
+        <label for="instansi">Nama Instansi Prakerin *</label>
+        <input type="text" id="instansi" name="instansi" placeholder="Nama perusahaan" required>
+        <div class="error" id="err-instansi"></div>
+      </div>
+
+      <div>
+        <label for="tanggal">Tanggal *</label>
+        <input type="date" id="tanggal" name="tanggal" required>
+        <div class="error" id="err-tanggal"></div>
+      </div>
+
+      <div>
+        <label for="jamDatang">Jam Datang *</label>
+        <input type="time" id="jamDatang" name="jamDatang" required>
+        <div class="error" id="err-jamDatang"></div>
+      </div>
+
+      <div>
+        <label for="jamPulang">Jam Pulang *</label>
+        <input type="time" id="jamPulang" name="jamPulang" required>
+        <div class="error" id="err-jamPulang"></div>
+      </div>
+
+      <div class="full">
+        <label for="kegiatan">Deskripsi Kegiatan Hari Ini *</label>
+        <textarea id="kegiatan" name="kegiatan" placeholder="Tuliskan apa yang dikerjakan hari ini" required></textarea>
+        <div class="error" id="err-kegiatan"></div>
+      </div>
+
+      <div class="full">
+        <label for="foto">Upload Foto Kegiatan (opsional)</label>
+        <input type="file" id="foto" name="foto" accept="image/*">
+      </div>
+
+      <div class="actions full">
+        <button type="submit">Kirim Absen</button>
+        <button type="button" class="secondary" id="resetBtn">Reset</button>
+      </div>
+    </form>
+
+    <div id="success" style="display:none;margin-top:16px;padding:14px;background:#ecfdf5;color:#065f46;border-radius:8px;">Absen berhasil dikirim!</div>
+  </div>
+
+  <script>
+    const form = document.getElementById('absenForm');
+    const successBox = document.getElementById('success');
+
+    function clearErrors(){
+      document.querySelectorAll('.error').forEach(e => e.textContent = '');
+    }
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      clearErrors();
+      let ok = true;
+
+      const fields = ['name','kelas','instansi','tanggal','jamDatang','jamPulang','kegiatan'];
+      fields.forEach(id =>{
+        const input = document.getElementById(id);
+        if(!input.value.trim()){
+          document.getElementById('err-'+id).textContent = 'Tidak boleh kosong';
+          ok = false;
+        }
+      });
+
+      if(!ok) return;
+
+      form.reset();
+      successBox.style.display = 'block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      form.reset(); clearErrors(); successBox.style.display='none';
+    });
+  </script>
+</body>
+</html>
